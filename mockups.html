@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f0e5">
+  <title>Jogo de Palavras | Protótipos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif; font-synthesis: none; text-rendering: optimizeLegibility; --mono: "IBM Plex Mono", "Courier New", monospace; }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; color: #182522; background-color: #dfe5dc; background-image: radial-gradient(rgba(24,37,34,.11) .7px, transparent .7px); background-size: 13px 13px; }
+    button, input, select { font: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #285ed8; outline-offset: 3px; }
+    .studio { --surface: #f4f0e5; --surface-alt: #e8e1d1; --text: #182522; --subtle: #5d6861; --line: rgba(24,37,34,.26); --accent: #e75a45; --accent-text: #fffaf1; --right: #527ac4; --right-text: #fff; --present: #c9e64a; --present-text: #182522; --absent: #26342f; --absent-text: #fff; --tile: #fbf8f0; --tile-border: rgba(24,37,34,.48); --round: 2px; min-height: 100vh; padding: 24px clamp(16px,4vw,52px) 42px; }
+    .studio[data-theme="access"] { --surface: #fff; --surface-alt: #f0f2f5; --text: #111820; --subtle: #354453; --line: #596777; --accent: #123d70; --accent-text: #fff; --right: #14532d; --right-text: #fff; --present: #ffe45e; --present-text: #111820; --absent: #202b39; --absent-text: #fff; --tile: #fff; --tile-border: #314253; --round: 0px; }
+    .studio[data-theme="signal"] { --surface: #202522; --surface-alt: #303a35; --text: #f2f3ec; --subtle: #c2cbc0; --line: #68776d; --accent: #ff704a; --accent-text: #1b211d; --right: #63c7c0; --right-text: #15221f; --present: #d7f36a; --present-text: #15221f; --absent: #37443d; --absent-text: #f2f3ec; --tile: #29312c; --tile-border: #718077; --round: 3px; color-scheme: dark; }
+    .studio-header, .prototype-caption, #prototype-host, .studio-footer { width: min(1280px,100%); margin-inline: auto; }
+    .studio-header { display: grid; grid-template-columns: minmax(180px,1fr) minmax(240px,1.2fr) auto; align-items: end; gap: 24px; margin-bottom: 18px; }
+    .studio-kicker, .eyebrow, .brand-sub { margin: 0; font: 600 11px/1.3 var(--mono); text-transform: uppercase; }
+    .studio-kicker { color: #40554a; }
+    .studio-title { margin: 4px 0 0; font-size: 29px; line-height: 1; }
+    .studio-intro { max-width: 460px; margin: 0; color: #35463e; font-size: 14px; line-height: 1.45; }
+    .prototype-tabs { display: flex; gap: 4px; padding: 4px; border: 1px solid rgba(24,37,34,.3); background: rgba(244,240,229,.78); }
+    .prototype-tab { min-height: 42px; padding: 8px 12px; border: 0; color: #182522; background: transparent; cursor: pointer; font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .prototype-tab[aria-selected="true"] { color: #fff; background: #182522; }
+    .prototype-tab:hover:not([aria-selected="true"]) { background: rgba(24,37,34,.09); }
+    .prototype-caption { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; color: #35463e; font-size: 13px; }
+    .prototype-caption strong { color: #182522; }
+    .mockup[hidden] { display: none; }
+    .mockup { --surface: #f4f0e5; --surface-alt: #e8e1d1; --text: #182522; --subtle: #5d6861; --line: rgba(24,37,34,.26); --accent: #e75a45; --accent-text: #fffaf1; --right: #527ac4; --right-text: #fff; --present: #c9e64a; --present-text: #182522; --absent: #26342f; --absent-text: #fff; --tile: #fbf8f0; --tile-border: rgba(24,37,34,.48); --round: 2px; width: 100%; min-height: 680px; padding: clamp(18px,3vw,36px); border: 1px solid var(--line); color: var(--text); background: var(--surface); box-shadow: 0 18px 50px rgba(25,38,30,.12); }
+    .mockup--access { --surface: #fff; --surface-alt: #f0f2f5; --text: #111820; --subtle: #354453; --line: #596777; --accent: #123d70; --accent-text: #fff; --right: #14532d; --right-text: #fff; --present: #ffe45e; --present-text: #111820; --absent: #202b39; --absent-text: #fff; --tile: #fff; --tile-border: #314253; --round: 0px; font-family: Arial,sans-serif; border: 2px solid #111820; box-shadow: none; }
+    .mockup--signal { --surface: #202522; --surface-alt: #303a35; --text: #f2f3ec; --subtle: #c2cbc0; --line: #68776d; --accent: #ff704a; --accent-text: #1b211d; --right: #63c7c0; --right-text: #15221f; --present: #d7f36a; --present-text: #15221f; --absent: #37443d; --absent-text: #f2f3ec; --tile: #29312c; --tile-border: #718077; --round: 3px; border-color: #68776d; box-shadow: 0 18px 50px rgba(8,12,10,.3); }
+    .game-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .brand-lockup { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { display: grid; place-items: center; width: 42px; aspect-ratio: 1; color: var(--surface); background: var(--text); font: 700 22px/1 var(--mono); transform: rotate(-3deg); }
+    .mockup--access .brand-mark { color: #fff; background: #111820; transform: none; }
+    .mockup--signal .brand-mark { color: #18231e; background: #d7f36a; border-radius: 50%; transform: none; }
+    .brand-name { margin: 0; font-size: 17px; font-weight: 800; line-height: 1; }
+    .brand-sub { margin-top: 5px; color: var(--subtle); font-size: 10px; }
+    .header-actions { display: flex; align-items: center; gap: 6px; }
+    .quiet-button, .outline-button, .primary-button, .icon-button { min-height: 42px; border: 1px solid var(--line); border-radius: var(--round); cursor: pointer; font-weight: 700; }
+    .quiet-button, .outline-button { padding: 9px 12px; color: var(--text); background: transparent; }
+    .quiet-button:hover, .outline-button:hover { background: var(--surface-alt); }
+    .primary-button { padding: 10px 15px; color: var(--accent-text); background: var(--accent); border-color: var(--accent); }
+    .primary-button:hover { filter: brightness(1.08); }
+    .icon-button { width: 42px; padding: 0; color: var(--text); background: transparent; font-size: 18px; }
+    .text-button { padding: 0; border: 0; color: var(--text); background: none; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-weight: 700; }
+    .game-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(225px,280px); align-items: start; gap: clamp(28px,6vw,84px); max-width: 1000px; margin: 0 auto; padding-top: 30px; }
+    .play-column { min-width: 0; }
+    .round-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--subtle); font: 500 11px/1.4 var(--mono); text-transform: uppercase; }
+    .round-number { padding: 5px 7px; color: var(--surface); background: var(--text); }
+    .round-title { margin: 13px 0 8px; font-size: clamp(27px,3vw,38px); line-height: 1.05; }
+    .round-description { max-width: 530px; margin: 0; color: var(--subtle); font-size: 15px; line-height: 1.5; }
+    .control-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 15px; }
+    .segmented { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line); background: var(--surface-alt); }
+    .segmented button { min-height: 36px; padding: 7px 10px; border: 0; border-radius: var(--round); color: var(--text); background: transparent; cursor: pointer; font-size: 12px; font-weight: 700; }
+    .segmented button[aria-pressed="true"] { color: var(--accent-text); background: var(--accent); }
+    .mechanic-picker { margin-bottom: 14px; }
+    .mechanic-picker button[aria-pressed="true"] { color: var(--text); background: var(--surface); box-shadow: inset 0 -2px 0 var(--accent); }
+    .level-control { display: flex; align-items: center; gap: 8px; color: var(--subtle); font-size: 12px; font-weight: 700; }
+    .level-control select { min-height: 38px; max-width: 200px; padding: 6px 28px 6px 9px; border: 1px solid var(--line); border-radius: var(--round); color: var(--text); background: var(--surface); }
+    .hint-line { display: flex; align-items: flex-start; gap: 10px; min-height: 54px; margin: 0 0 15px; padding: 11px 13px; border-left: 3px solid var(--accent); color: var(--text); background: var(--surface-alt); font-size: 13px; line-height: 1.45; }
+    .hint-line p { margin: 0; }
+    .hint-mark { flex: none; color: var(--accent); font: 700 12px/1.5 var(--mono); }
+    .board-wrap { width: fit-content; max-width: 100%; margin: 16px auto 18px; }
+    .board { display: grid; gap: 5px; justify-content: center; padding: 0; list-style: none; }
+    .board-row { display: grid; grid-template-columns: repeat(var(--word-length,5),minmax(34px,47px)); gap: 5px; }
+    .tile { display: grid; place-items: center; width: 100%; aspect-ratio: 1; border: 1px solid var(--tile-border); border-radius: var(--round); color: var(--text); background: var(--tile); font: 600 clamp(18px,2.3vw,25px)/1 var(--mono); }
+    .tile--correct { color: var(--right-text); background: var(--right); border-color: var(--right); }
+    .tile--present { color: var(--present-text); background-color: var(--present); border-color: var(--text); background-image: repeating-linear-gradient(135deg,transparent 0 7px,rgba(24,37,34,.12) 7px 9px); }
+    .tile--absent { color: var(--absent-text); background: var(--absent); border-color: var(--absent); }
+    .attempt-summary { margin: 7px 0 0; color: var(--subtle); text-align: center; font-size: 12px; }
+    .guess-form { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 9px; max-width: 530px; margin: 0 auto; }
+    .guess-field { display: grid; gap: 5px; color: var(--text); font-size: 12px; font-weight: 700; }
+    .guess-field input { width: 100%; min-height: 46px; padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--round); color: var(--text); background: var(--surface); font: 600 17px/1 var(--mono); text-transform: uppercase; }
+    .guess-field input::placeholder { color: var(--subtle); opacity: .8; font: 500 13px/1.3 "Bricolage Grotesque","Trebuchet MS",sans-serif; text-transform: none; }
+    .form-status { min-height: 24px; margin: 9px auto 0; color: var(--subtle); text-align: center; font-size: 13px; }
+    .virtual-keyboard { display: grid; gap: 6px; max-width: 535px; margin: 12px auto 0; }
+    .key-row { display: flex; justify-content: center; gap: 5px; }
+    .key { min-width: 0; min-height: 40px; flex: 1 1 0; padding: 0 5px; border: 1px solid var(--line); border-radius: var(--round); color: var(--text); background: var(--surface-alt); cursor: pointer; font: 600 12px/1 var(--mono); }
+    .key--wide { flex: 1.55 1 0; font: 700 10px/1.15 "Bricolage Grotesque","Trebuchet MS",sans-serif; }
+    .key:hover:not(:disabled) { border-color: var(--accent); }
+    .key:disabled { cursor: not-allowed; opacity: .72; }
+    .key[data-state="correct"] { color: var(--right-text); background: var(--right); border-color: var(--right); }
+    .key[data-state="present"] { color: var(--present-text); background: var(--present); border-color: var(--text); }
+    .key[data-state="absent"] { color: var(--absent-text); background: var(--absent); border-color: var(--absent); }
+    .game-aside { display: grid; gap: 22px; padding-top: 6px; }
+    .aside-section { padding-top: 14px; border-top: 1px solid var(--line); }
+    .aside-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 12px; font-size: 17px; }
+    .aside-heading small { color: var(--subtle); font: 500 10px/1 var(--mono); text-transform: uppercase; }
+    .stat-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px 14px; }
+    .stat { display: grid; gap: 2px; }
+    .stat strong { font: 600 22px/1.1 var(--mono); }
+    .stat span { color: var(--subtle); font-size: 11px; }
+    .collection-line { display: flex; align-items: center; gap: 10px; color: var(--text); font-size: 13px; line-height: 1.35; }
+    .stamp { display: grid; place-items: center; width: 38px; aspect-ratio: 1; border: 1px solid var(--text); color: var(--text); background: var(--present); font: 600 15px/1 var(--mono); transform: rotate(-5deg); }
+    .friend-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .friend-row { display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 8px; font-size: 12px; }
+    .friend-rank, .friend-score { color: var(--subtle); font: 500 11px/1 var(--mono); }
+    .sr-note { margin: 0; color: var(--subtle); font-size: 12px; line-height: 1.5; }
+    .aside-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+    .aside-actions button { min-height: 37px; font-size: 12px; }
+    .mini-legend { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+    .legend-item { display: flex; align-items: center; gap: 8px; color: var(--subtle); font-size: 12px; }
+    .legend-symbol { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--line); font: 600 11px/1 var(--mono); }
+    .legend-symbol.is-right { color: var(--right-text); background: var(--right); border-color: var(--right); }
+    .legend-symbol.is-present { color: var(--present-text); background: var(--present); }
+    .legend-symbol.is-absent { color: var(--absent-text); background: var(--absent); border-color: var(--absent); }
+    .access-instructions { margin-top: 12px; padding: 12px; border: 1px solid var(--line); background: var(--surface-alt); }
+    .access-instructions h3 { margin: 0 0 6px; font-size: 14px; }
+    .access-instructions p { margin: 0; color: var(--subtle); font-size: 12px; line-height: 1.5; }
+    .mockup--access .round-title { font-size: 34px; }
+    .mockup--access .round-description, .mockup--access .sr-note, .mockup--access .legend-item { font-size: 14px; }
+    .mockup--access .tile { font-size: 23px; }
+    .mockup--access .key { min-height: 48px; font-size: 14px; }
+    .mockup--access .key--wide { font-size: 12px; }
+    .mockup--access .segmented button { min-height: 42px; font-size: 14px; }
+    .mockup--access .form-status, .mockup--access .stat span { font-size: 14px; }
+    .mockup--signal .round-meta { color: #a8c9ba; }
+    .mockup--signal .hint-line { border-left-color: var(--present); }
+    .mockup--signal .hint-mark { color: var(--present); }
+    .mockup--signal .aside-section { border-top-style: dashed; }
+    .mockup--signal .stamp { border-radius: 50%; border-color: var(--present); color: var(--text); background: transparent; transform: none; }
+    .signal-meter { display: flex; align-items: center; gap: 4px; height: 21px; margin: 0 0 7px; }
+    .signal-meter span { width: 7px; height: var(--bar-height,8px); background: #63c7c0; opacity: .85; }
+    .signal-meter span:nth-child(3n) { background: #d7f36a; }
+    .signal-meter span:nth-child(4n) { background: #ff704a; }
+    .share-result { display: none; max-width: 530px; margin: 15px auto 0; padding: 13px; border: 1px solid var(--line); background: var(--surface-alt); }
+    .share-result[data-visible="true"] { display: block; }
+    .share-result p { margin: 0 0 9px; font-size: 12px; font-weight: 700; }
+    .share-result textarea { display: block; width: 100%; min-height: 58px; resize: vertical; padding: 8px; border: 1px solid var(--line); color: var(--text); background: var(--surface); font: 12px/1.5 var(--mono); }
+    .share-result .copy-status { margin: 7px 0 0; color: var(--subtle); font-size: 12px; }
+    .share-result .outline-button { min-height: 36px; margin-top: 9px; font-size: 12px; }
+    dialog { width: min(440px,calc(100vw - 32px)); padding: 24px; border: 2px solid #182522; color: #182522; background: #f4f0e5; box-shadow: 0 18px 70px rgba(0,0,0,.3); }
+    dialog::backdrop { background: rgba(15,24,20,.6); }
+    dialog h2 { margin: 0 0 10px; font-size: 25px; }
+    dialog p { margin: 0 0 18px; color: #35463e; line-height: 1.55; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .dialog-actions button { min-height: 42px; }
+    .studio-footer { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; color: #40554a; font-size: 12px; }
+    .studio-footer p { margin: 0; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 920px) {
+      .studio-header { grid-template-columns: minmax(180px,1fr) auto; align-items: center; }
+      .studio-intro { grid-column: 1 / -1; grid-row: 2; }
+      .prototype-tabs { justify-self: end; }
+      .game-layout { grid-template-columns: minmax(0,1fr) 220px; gap: 28px; }
+    }
+    @media (max-width: 720px) {
+      .studio { padding: 16px 12px 28px; }
+      .studio-header { grid-template-columns: 1fr; gap: 12px; align-items: start; margin-bottom: 15px; }
+      .studio-title { font-size: 26px; }
+      .studio-intro { grid-column: auto; grid-row: auto; }
+      .prototype-tabs { width: 100%; justify-self: stretch; overflow-x: auto; }
+      .prototype-tab { flex: 1 0 auto; padding-inline: 8px; font-size: 12px; }
+      .prototype-caption { align-items: flex-start; flex-direction: column; gap: 3px; margin-bottom: 10px; }
+      .mockup { min-height: 0; padding: 17px 13px 23px; }
+      .game-header { gap: 8px; padding-bottom: 14px; }
+      .brand-lockup { gap: 8px; }
+      .brand-mark { width: 36px; font-size: 19px; }
+      .brand-name { font-size: 15px; }
+      .brand-sub { font-size: 9px; }
+      .header-actions .quiet-button { display: none; }
+      .header-actions .icon-button { width: 38px; min-height: 38px; font-size: 16px; }
+      .game-layout { grid-template-columns: minmax(0,1fr); gap: 26px; padding-top: 22px; }
+      .game-aside { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 15px; }
+      .game-aside .aside-section:first-child { grid-column: 1 / -1; }
+      .round-title { font-size: 30px; }
+      .round-description { font-size: 14px; }
+      .control-row { align-items: flex-start; }
+      .level-control { width: 100%; justify-content: space-between; }
+      .level-control select { flex: 1; max-width: 220px; }
+      .board-row { grid-template-columns: repeat(var(--word-length,5),minmax(30px,42px)); gap: 4px; }
+      .board { gap: 4px; }
+      .tile { font-size: 20px; }
+      .key { min-height: 40px; padding-inline: 3px; font-size: 11px; }
+      .key-row { gap: 4px; }
+      .key--wide { font-size: 9px; }
+      .mockup--access .key { min-height: 44px; }
+      .guess-form { grid-template-columns: 1fr; }
+      .guess-form .primary-button { width: 100%; }
+      .studio-footer { flex-direction: column; }
+    }
+    @media (max-width: 380px) {
+      .segmented button { padding-inline: 7px; font-size: 11px; }
+      .board-row { grid-template-columns: repeat(var(--word-length,5),minmax(27px,1fr)); }
+      .board { width: min(100%,290px); }
+      .tile { font-size: 17px; }
+      .game-aside { grid-template-columns: 1fr; }
+      .game-aside .aside-section:first-child { grid-column: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="studio" id="studio" data-theme="print">
+    <header class="studio-header">
+      <div><p class="studio-kicker">Exploração de produto / 03 conceitos</p><h1 class="studio-title">Jogo de Palavras</h1></div>
+      <p class="studio-intro">Três caminhos para o mesmo desafio: palavra diária, treino livre e descoberta em português brasileiro.</p>
+      <div class="prototype-tabs" role="tablist" aria-label="Escolher conceito visual">
+        <button class="prototype-tab" id="tab-print" role="tab" aria-controls="prototype-print" aria-selected="true" tabindex="0" data-tab="print">01 Gráfica</button>
+        <button class="prototype-tab" id="tab-access" role="tab" aria-controls="prototype-access" aria-selected="false" tabindex="-1" data-tab="access">02 Acesso</button>
+        <button class="prototype-tab" id="tab-signal" role="tab" aria-controls="prototype-signal" aria-selected="false" tabindex="-1" data-tab="signal">03 Sintonia</button>
+      </div>
+    </header>
+    <div class="prototype-caption" aria-live="polite"><strong id="concept-name">01 / Gráfica de Bolso</strong><span id="concept-description">Papel, tinta e marcas de impressão para um ritual diário acolhedor.</span></div>
+    <div id="prototype-host"></div>
+    <footer class="studio-footer"><p>Mockup interativo para avaliação visual. Cada conceito tem sua própria rodada de demonstração.</p><p>Sem cadastro, anúncios ou dados enviados.</p></footer>
+  </main>
+  <dialog id="info-dialog" aria-labelledby="dialog-title"><h2 id="dialog-title">Estatísticas</h2><p>Partidas jogadas: 12. Vitórias: 9. Melhor sequência: 4 dias. Sua coleção guarda palavras descobertas e não altera a dificuldade.</p><div class="dialog-actions"><button class="primary-button" type="button" data-close-dialog>Fechar</button></div></dialog>
+  <script>
+    const concepts = [
+      { id: "print", name: "01 / Gráfica de Bolso", description: "Papel, tinta e marcas de impressão para um ritual diário acolhedor.", brand: "PALAVRA", brandSub: "Edição de hoje", side: `
+        <section class="aside-section" aria-labelledby="print-stats-title"><h2 class="aside-heading" id="print-stats-title">Seu caderno <small>em números</small></h2><div class="stat-grid"><div class="stat"><strong>12</strong><span>partidas</span></div><div class="stat"><strong>75%</strong><span>vitórias</span></div><div class="stat"><strong>4</strong><span>dias seguidos</span></div><div class="stat"><strong>02</strong><span>selos novos</span></div></div></section>
+        <section class="aside-section" aria-labelledby="print-collection-title"><h2 class="aside-heading" id="print-collection-title">Coleção <small>esta semana</small></h2><div class="collection-line"><span class="stamp" aria-hidden="true">A</span><span>Palavras que fazem festa<br><strong>2 de 5 descobertas</strong></span></div></section>
+        <section class="aside-section" aria-labelledby="print-friends-title"><h2 class="aside-heading" id="print-friends-title">Sua roda <small>hoje</small></h2><ul class="friend-list"><li class="friend-row"><span class="friend-rank">01</span><span>Lia</span><span class="friend-score">3 tent.</span></li><li class="friend-row"><span class="friend-rank">02</span><span>Você</span><span class="friend-score">--</span></li><li class="friend-row"><span class="friend-rank">03</span><span>Rafa</span><span class="friend-score">--</span></li></ul><div class="aside-actions"><button class="outline-button" type="button" data-action="share">Compartilhar</button><button class="text-button" type="button" data-action="stats">Ver estatísticas</button></div></section>` },
+      { id: "access", name: "02 / Jogo Claro", description: "Contraste forte, leitura direta e cada pista explicada por texto e símbolo.", brand: "JOGO CLARO", brandSub: "Palavra do dia", side: `
+        <section class="aside-section" aria-labelledby="access-how-title"><h2 class="aside-heading" id="access-how-title">Como jogar <small>em 3 passos</small></h2><ul class="mini-legend"><li class="legend-item"><span class="legend-symbol is-right" aria-hidden="true">✓</span><span>Letra certa na posição certa</span></li><li class="legend-item"><span class="legend-symbol is-present" aria-hidden="true">↔</span><span>Letra existe em outra posição</span></li><li class="legend-item"><span class="legend-symbol is-absent" aria-hidden="true">×</span><span>Letra não aparece na palavra</span></li></ul><div class="access-instructions"><h3>Entrada por teclado</h3><p>Digite seu palpite e pressione Enter para enviar. Backspace apaga uma letra. O teclado na tela oferece as mesmas ações.</p></div></section>
+        <section class="aside-section" aria-labelledby="access-progress-title"><h2 class="aside-heading" id="access-progress-title">Seu progresso</h2><div class="stat-grid"><div class="stat"><strong>9</strong><span>vitórias</span></div><div class="stat"><strong>4</strong><span>melhor sequência</span></div></div><p class="sr-note" style="margin-top:12px">As pistas usam texto, forma e padrão além das cores. O jogo não tem cronômetro.</p></section>
+        <section class="aside-section" aria-labelledby="access-social-title"><h2 class="aside-heading" id="access-social-title">Amigos</h2><p class="sr-note">Compare a mesma palavra e o mesmo nível. Compartilhar não revela a resposta.</p><div class="aside-actions"><button class="outline-button" type="button" data-action="share">Compartilhar grade</button><button class="text-button" type="button" data-action="stats">Estatísticas</button></div></section>` },
+      { id: "signal", name: "03 / Sintonia", description: "Uma cabine de rádio analógica transforma cada tentativa em sinal e descoberta.", brand: "SINTONIA", brandSub: "Sinal 05 / palavras", side: `
+        <section class="aside-section" aria-labelledby="signal-meter-title"><h2 class="aside-heading" id="signal-meter-title">Seu sinal <small>temporada 01</small></h2><div class="signal-meter" aria-hidden="true"><span style="--bar-height:7px"></span><span style="--bar-height:12px"></span><span style="--bar-height:16px"></span><span style="--bar-height:10px"></span><span style="--bar-height:18px"></span><span style="--bar-height:12px"></span><span style="--bar-height:8px"></span><span style="--bar-height:15px"></span><span style="--bar-height:10px"></span><span style="--bar-height:17px"></span><span style="--bar-height:9px"></span><span style="--bar-height:14px"></span></div><div class="stat-grid"><div class="stat"><strong>09</strong><span>palavras no ar</span></div><div class="stat"><strong>04</strong><span>dias em sintonia</span></div></div></section>
+        <section class="aside-section" aria-labelledby="signal-collection-title"><h2 class="aside-heading" id="signal-collection-title">Frequências <small>coleção</small></h2><div class="collection-line"><span class="stamp" aria-hidden="true">01</span><span>Faixa: celebrações<br><strong>2 sinais capturados</strong></span></div></section>
+        <section class="aside-section" aria-labelledby="signal-friends-title"><h2 class="aside-heading" id="signal-friends-title">Na mesma onda <small>amigos</small></h2><ul class="friend-list"><li class="friend-row"><span class="friend-rank">01</span><span>Lia</span><span class="friend-score">3 palpites</span></li><li class="friend-row"><span class="friend-rank">02</span><span>Você</span><span class="friend-score">--</span></li><li class="friend-row"><span class="friend-rank">03</span><span>Rafa</span><span class="friend-score">--</span></li></ul><div class="aside-actions"><button class="outline-button" type="button" data-action="share">Enviar sinal</button><button class="text-button" type="button" data-action="stats">Abrir diário</button></div></section>` }
+    ];
+
+    const host = document.querySelector("#prototype-host");
+    const studio = document.querySelector("#studio");
+    const dialog = document.querySelector("#info-dialog");
+    const conceptName = document.querySelector("#concept-name");
+    const conceptDescription = document.querySelector("#concept-description");
+
+    function renderConcept(concept) {
+      const section = document.createElement("section");
+      section.className = `mockup mockup--${concept.id}`;
+      section.id = `prototype-${concept.id}`;
+      section.hidden = concept.id !== "print";
+      section.dataset.mockup = concept.id;
+      section.setAttribute("role", "tabpanel");
+      section.setAttribute("aria-labelledby", `tab-${concept.id}`);
+      section.innerHTML = `
+        <header class="game-header"><div class="brand-lockup"><span class="brand-mark" aria-hidden="true">${concept.id === "signal" ? "S" : "P"}</span><div><p class="brand-name">${concept.brand}</p><p class="brand-sub">${concept.brandSub}</p></div></div><div class="header-actions"><button class="quiet-button" type="button" data-action="collection">Minha coleção</button><button class="quiet-button" type="button" data-action="stats">Estatísticas</button></div></header>
+        <div class="game-layout"><section class="play-column" aria-label="Área de jogo">${concept.id === "signal" ? `<div class="signal-meter" aria-hidden="true"><span style="--bar-height:6px"></span><span style="--bar-height:11px"></span><span style="--bar-height:18px"></span><span style="--bar-height:9px"></span><span style="--bar-height:15px"></span><span style="--bar-height:20px"></span><span style="--bar-height:9px"></span><span style="--bar-height:14px"></span><span style="--bar-height:19px"></span><span style="--bar-height:8px"></span><span style="--bar-height:13px"></span><span style="--bar-height:17px"></span></div>` : ""}
+          <div class="round-meta"><span class="round-number" data-round-label>DESAFIO 284</span><span data-session-label>Palavra em comum hoje</span></div><h2 class="round-title" data-round-title>Uma palavra, novas pistas.</h2><p class="round-description" data-round-description>Descubra a palavra do dia. Cada palpite revela novas pistas, sem pressa e sem cronômetro.</p>
+          <div class="control-row"><div class="segmented session-picker" role="group" aria-label="Tipo de partida"><button type="button" data-session="daily" aria-pressed="true">Desafio diário</button><button type="button" data-session="practice" aria-pressed="false">Prática livre</button></div><label class="level-control">Nível <select data-level aria-label="Escolha a dificuldade"><option value="easy">Leve · 4 letras</option><option value="normal" selected>Normal · 5 letras</option><option value="hard">Desafiador · 7 letras</option></select></label></div>
+          <div class="segmented mechanic-picker" role="group" aria-label="Mecânica do desafio"><button type="button" data-mechanic="letters" aria-pressed="true">Letras</button><button type="button" data-mechanic="definition" aria-pressed="false">Por definição</button></div><div class="hint-line" data-hint-line><span class="hint-mark" aria-hidden="true">PISTA</span><p data-hint>As letras mostram se a resposta está na palavra e na posição certa.</p></div>
+          <div class="board-wrap"><ol class="board" data-board aria-label="Tentativas da palavra"></ol><p class="attempt-summary" data-attempt-summary></p></div>
+          <form class="guess-form" data-guess-form novalidate><label class="guess-field"><span data-input-label>Seu palpite · 5 letras</span><input data-guess-input name="guess" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="Digite sua palavra"><span class="sr-only" data-input-help>Você pode digitar pelo teclado físico ou usar as teclas na tela.</span></label><button class="primary-button" type="submit" data-submit>Enviar palpite</button></form>
+          <p class="form-status" data-live-status role="status" aria-live="polite" aria-atomic="true">Pronto para jogar.</p><div class="virtual-keyboard" data-keyboard aria-label="Teclado virtual"></div><div class="share-result" data-share-result data-visible="false"><p>Resultado sem spoiler para compartilhar</p><textarea readonly aria-label="Grade de resultado sem spoiler" data-share-text></textarea><button class="outline-button" type="button" data-copy>Copiar resultado</button><p class="copy-status" data-copy-status aria-live="polite"></p></div>
+        </section><aside class="game-aside" aria-label="Progresso e comunidade">${concept.side}</aside></div>`;
+      return section;
+    }
+
+    concepts.forEach(concept => host.append(renderConcept(concept)));
+    const answerSets = {
+      easy: { answer: "GATO", clue: "Mamífero doméstico conhecido por ronronar.", guesses: 7, length: 4 },
+      normal: { answer: "FESTA", clue: "Reunião ou evento para comemorar algo.", guesses: 6, length: 5 },
+      hard: { answer: "CAMINHO", clue: "Percurso que leva de um ponto a outro.", guesses: 5, length: 7 }
+    };
+    const keyRows = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+
+    function normalizeWord(value) {
+      return Array.from(value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase()).filter(letter => /[A-Z]/.test(letter)).join("");
+    }
+
+    function evaluateGuess(guess, answer) {
+      const marks = Array(guess.length).fill("absent");
+      const remaining = answer.split("");
+      for (let index = 0; index < guess.length; index += 1) {
+        if (guess[index] === answer[index]) { marks[index] = "correct"; remaining[index] = ""; }
+      }
+      for (let index = 0; index < guess.length; index += 1) {
+        if (marks[index] === "correct") continue;
+        const found = remaining.indexOf(guess[index]);
+        if (found !== -1) { marks[index] = "present"; remaining[found] = ""; }
+      }
+      return marks;
+    }
+
+    function initGame(root) {
+      const board = root.querySelector("[data-board]");
+      const form = root.querySelector("[data-guess-form]");
+      const input = root.querySelector("[data-guess-input]");
+      const level = root.querySelector("[data-level]");
+      const status = root.querySelector("[data-live-status]");
+      const summary = root.querySelector("[data-attempt-summary]");
+      const keyboard = root.querySelector("[data-keyboard]");
+      const shareArea = root.querySelector("[data-share-result]");
+      const shareText = root.querySelector("[data-share-text]");
+      const state = { guesses: [], session: "daily", mechanic: "letters", level: "normal", done: false, won: false, answer: "FESTA", maxGuesses: 6, wordLength: 5, marks: {} };
+
+      function targetWord() {
+        const set = answerSets[state.level];
+        if (state.session === "practice") return { easy: "LAGO", normal: "LIMPO", hard: "CADERNO" }[state.level];
+        return set.answer;
+      }
+      function resultSummary(row) {
+        const good = row.filter(mark => mark === "correct").length;
+        const near = row.filter(mark => mark === "present").length;
+        const absent = row.filter(mark => mark === "absent").length;
+        return `${good} ${good === 1 ? "letra" : "letras"} na posição certa, ${near} em outra posição e ${absent} ausentes.`;
+      }
+      function makeKey(label, value, wide) {
+        const key = document.createElement("button");
+        key.type = "button";
+        key.className = `key${wide ? " key--wide" : ""}`;
+        key.textContent = label;
+        key.dataset.key = value;
+        key.setAttribute("aria-label", value === "Backspace" ? "Apagar última letra" : value === "Enter" ? "Enviar tentativa" : `Tecla ${value}`);
+        key.addEventListener("click", () => {
+          if (state.done) return;
+          if (value === "Backspace") input.value = Array.from(input.value).slice(0,-1).join("");
+          else if (value === "Enter") form.requestSubmit();
+          else if (normalizeWord(input.value).length < state.wordLength) input.value += value;
+          input.focus();
+        });
+        return key;
+      }
+      function renderKeyboard() {
+        keyboard.replaceChildren();
+        keyRows.forEach((letters, rowIndex) => {
+          const row = document.createElement("div");
+          row.className = "key-row";
+          if (rowIndex === 2) row.append(makeKey("Apagar","Backspace",true));
+          for (const letter of letters) row.append(makeKey(letter,letter,false));
+          if (rowIndex === 2) row.append(makeKey("Enviar","Enter",true));
+          keyboard.append(row);
+        });
+        root.querySelectorAll("[data-key]").forEach(key => {
+          const char = key.dataset.key;
+          if (char.length === 1 && state.marks[char]) key.dataset.state = state.marks[char];
+          key.disabled = state.done;
+        });
+      }
+      function showShare() {
+        const squares = state.guesses.map(entry => entry.marks.map(mark => mark === "correct" ? "■" : mark === "present" ? "▨" : "□").join(""));
+        shareText.value = `Jogo de Palavras · ${state.session === "daily" ? "Desafio 284" : "Prática"} ${state.won ? state.guesses.length : "X"}/${state.maxGuesses}\n${squares.join("\n")}`;
+        shareArea.dataset.visible = "true";
+      }
+      function renderBoard() {
+        const remainingRows = state.maxGuesses - state.guesses.length;
+        board.style.setProperty("--word-length",state.wordLength);
+        board.replaceChildren();
+        board.setAttribute("aria-label",`${state.guesses.length} de ${state.maxGuesses} tentativas usadas`);
+        state.guesses.forEach((entry,rowIndex) => {
+          const row = document.createElement("li");
+          row.className = "board-row";
+          row.setAttribute("aria-label",`Tentativa ${rowIndex + 1}: ${resultSummary(entry.marks)}`);
+          entry.word.split("").forEach((letter,index) => {
+            const tile = document.createElement("span");
+            tile.className = `tile tile--${entry.marks[index]}`;
+            tile.textContent = letter;
+            tile.setAttribute("aria-label",`${letter}: ${entry.marks[index] === "correct" ? "letra correta na posição correta" : entry.marks[index] === "present" ? "letra na palavra, em outra posição" : "letra não encontrada"}`);
+            row.append(tile);
+          });
+          board.append(row);
+        });
+        for (let rowIndex = 0; rowIndex < remainingRows; rowIndex += 1) {
+          const row = document.createElement("li");
+          row.className = "board-row";
+          row.setAttribute("aria-label",`Tentativa vazia ${state.guesses.length + rowIndex + 1}`);
+          for (let colIndex = 0; colIndex < state.wordLength; colIndex += 1) {
+            const tile = document.createElement("span");
+            tile.className = "tile";
+            tile.setAttribute("aria-hidden","true");
+            row.append(tile);
+          }
+          board.append(row);
+        }
+        const left = Math.max(0,state.maxGuesses - state.guesses.length);
+        summary.textContent = state.done ? (state.won ? `Palavra descoberta em ${state.guesses.length} ${state.guesses.length === 1 ? "tentativa" : "tentativas"}.` : `Fim de jogo. A palavra era ${state.answer}.`) : `Você tem ${left} ${left === 1 ? "tentativa" : "tentativas"}.`;
+        root.querySelector("[data-input-label]").textContent = `Seu palpite · ${state.wordLength} letras`;
+        input.maxLength = state.wordLength + 3;
+        input.setAttribute("aria-describedby",`${root.dataset.mockup}-input-help`);
+        root.querySelector("[data-input-help]").id = `${root.dataset.mockup}-input-help`;
+        root.querySelector("[data-hint]").textContent = state.mechanic === "definition" ? answerSets[state.level].clue : "As letras mostram se a resposta está na palavra e na posição certa.";
+        root.querySelector("[data-round-title]").textContent = state.session === "practice" ? "Treino no seu ritmo." : "Uma palavra, novas pistas.";
+        root.querySelector("[data-round-description]").textContent = state.session === "practice" ? "Pratique sem limite. Seus resultados não entram na comparação do desafio diário." : "Descubra a palavra do dia. Cada palpite revela novas pistas, sem pressa e sem cronômetro.";
+        root.querySelector("[data-round-label]").textContent = state.session === "practice" ? "MODO TREINO" : "DESAFIO 284";
+        root.querySelector("[data-session-label]").textContent = state.session === "practice" ? "Partida sem ranking" : "Palavra em comum hoje";
+        root.querySelector("[data-submit]").disabled = state.done;
+        input.disabled = state.done;
+        root.querySelector("[data-hint-line]").setAttribute("aria-label",`Pista: ${root.querySelector("[data-hint]").textContent}`);
+        const definitionButton = root.querySelector('[data-mechanic="definition"]');
+        definitionButton.setAttribute("aria-label",`Jogar por definição. Dica: ${answerSets[state.level].clue}`);
+        renderKeyboard();
+        if (state.done) showShare();
+      }
+      function resetGame() {
+        const set = answerSets[state.level];
+        state.answer = targetWord();
+        state.wordLength = set.length;
+        state.maxGuesses = set.guesses;
+        state.guesses = [];
+        state.done = false;
+        state.won = false;
+        state.marks = {};
+        input.value = "";
+        shareArea.dataset.visible = "false";
+        root.querySelector("[data-copy-status]").textContent = "";
+        renderBoard();
+        status.textContent = `Nova partida. Palavra com ${state.wordLength} letras e ${state.maxGuesses} tentativas.`;
+      }
+
+      form.addEventListener("submit",event => {
+        event.preventDefault();
+        if (state.done) return;
+        const guess = normalizeWord(input.value);
+        if (guess.length !== state.wordLength) {
+          status.textContent = `Digite uma palavra com exatamente ${state.wordLength} letras.`;
+          input.focus();
+          return;
+        }
+        const marks = evaluateGuess(guess,state.answer);
+        state.guesses.push({word:guess,marks});
+        guess.split("").forEach((letter,index) => {
+          const priority = {absent:0,present:1,correct:2};
+          if (!state.marks[letter] || priority[marks[index]] > priority[state.marks[letter]]) state.marks[letter] = marks[index];
+        });
+        state.won = guess === state.answer;
+        state.done = state.won || state.guesses.length === state.maxGuesses;
+        input.value = "";
+        renderBoard();
+        status.textContent = `${resultSummary(marks)} ${state.done ? (state.won ? `Você descobriu: ${state.answer}.` : `A palavra era ${state.answer}.`) : `Ainda não. ${state.maxGuesses-state.guesses.length} tentativas restantes.`}`;
+      });
+      level.addEventListener("change",() => { state.level = level.value; resetGame(); });
+      root.querySelectorAll("[data-session]").forEach(button => button.addEventListener("click",() => {
+        state.session = button.dataset.session;
+        root.querySelectorAll("[data-session]").forEach(item => item.setAttribute("aria-pressed",String(item === button)));
+        resetGame();
+      }));
+      root.querySelectorAll("[data-mechanic]").forEach(button => button.addEventListener("click",() => {
+        state.mechanic = button.dataset.mechanic;
+        root.querySelectorAll("[data-mechanic]").forEach(item => item.setAttribute("aria-pressed",String(item === button)));
+        resetGame();
+      }));
+      root.querySelectorAll('[data-action="share"]').forEach(button => button.addEventListener("click",() => {
+        if (state.done) { showShare(); shareArea.scrollIntoView({block:"nearest",behavior:"smooth"}); }
+        else status.textContent = "Conclua a partida para compartilhar uma grade sem spoiler.";
+      }));
+      root.querySelectorAll('[data-action="stats"],[data-action="collection"]').forEach(button => button.addEventListener("click",() => {
+        document.querySelector("#dialog-title").textContent = button.dataset.action === "collection" ? "Sua coleção" : "Estatísticas";
+        dialog.showModal();
+      }));
+      root.querySelector("[data-copy]").addEventListener("click",async () => {
+        try { await navigator.clipboard.writeText(shareText.value); root.querySelector("[data-copy-status]").textContent = "Resultado copiado. A resposta continua protegida."; }
+        catch { shareText.focus(); shareText.select(); root.querySelector("[data-copy-status]").textContent = "Selecione e copie o resultado. A resposta não está incluída."; }
+      });
+      input.addEventListener("input",() => {
+        const cleaned = Array.from(input.value.toUpperCase()).filter(letter => /[A-ZÀ-ÖØ-Þ]/.test(letter)).join("");
+        if (input.value !== cleaned) input.value = cleaned;
+      });
+      resetGame();
+    }
+
+    function activateConcept(id) {
+      document.querySelectorAll("[data-tab]").forEach(button => {
+        const active = button.dataset.tab === id;
+        button.setAttribute("aria-selected",String(active));
+        button.tabIndex = active ? 0 : -1;
+      });
+      document.querySelectorAll("[data-mockup]").forEach(section => { section.hidden = section.dataset.mockup !== id; });
+      const concept = concepts.find(item => item.id === id);
+      studio.dataset.theme = id;
+      conceptName.textContent = concept.name;
+      conceptDescription.textContent = concept.description;
+    }
+    document.querySelectorAll("[data-tab]").forEach(button => button.addEventListener("click",() => activateConcept(button.dataset.tab)));
+    document.querySelector(".prototype-tabs").addEventListener("keydown",event => {
+      const tabs = Array.from(document.querySelectorAll("[data-tab]"));
+      const current = tabs.indexOf(document.activeElement);
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+      event.preventDefault();
+      const next = (current + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+      tabs[next].focus();
+      activateConcept(tabs[next].dataset.tab);
+    });
+    document.querySelectorAll("[data-close-dialog]").forEach(button => button.addEventListener("click",() => dialog.close()));
+    dialog.addEventListener("click",event => { if (event.target === dialog) dialog.close(); });
+    const panels = Array.from(host.querySelectorAll(".mockup"));
+    panels.forEach(panel => initGame(panel));
+  </script>
+</body>
+</html>
